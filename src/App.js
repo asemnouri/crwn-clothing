@@ -6,31 +6,28 @@ import './App.css';
 import Header from './components/header/header'
 import SignInandUp from '../src/components/Pages/Sign-in-up/Sign-in-up'
 import {auth , createUserProfileDocument} from './firebase/firebase.utils'
+import {connect } from 'react-redux'
+import setCurrentUser from './Redux/user/userAction'
 
 class App extends React.Component {
-  constructor(){
-    super()
-    this.state={
-      currentUser:null
-    }
-  }
+  
   unSubscribeFromAuth=null
 componentDidMount(){
 this.unSubscribeFromAuth=auth.onAuthStateChanged(async userAuth =>{
   if(userAuth){
     const userRef=await createUserProfileDocument(userAuth) //userRef we got it from the config
     userRef.onSnapshot(snapshot=>{//same as onAuthStatChanged (used insted of get())
-      this.setState({//storing the data in the state
+      this.props.setCurrentUser({//storing the data in the state
         currentUser:{
           id:snapshot.id,//we use it to get the id because it doesnt exist in the data()
           ...snapshot.data()
         }
-      },()=>{console.log(this.state)})
+      },()=>{console.log(setCurrentUser)})
       
     });
   }
   else{
-    this.setState({currentUser:userAuth})//returns null always
+    setCurrentUser({userAuth})//returns null always
   }
   
   // createUserProfileDocument(user)
@@ -57,4 +54,10 @@ componentWillUnmount(){
   }
 }
 
-export default App;
+const  mapDispatchToProps = dispatch => {
+  return {
+    setCurrentUser: (user) => dispatch(setCurrentUser(user))
+  }
+}
+
+export default connect(null,mapDispatchToProps)(App);
