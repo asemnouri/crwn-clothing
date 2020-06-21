@@ -20,12 +20,15 @@ const config =  {
       const userRef =firestore.doc(`users/${userAuth.uid}`)
 
       const snapShot =await userRef.get();
-      
+
+    //OR const snapShot= await firestore.collection('users').doc(`${userAuth}`).get();
+
+      //to store the data in the firestore database
       if(!snapShot.exists){
         const {displayName,email}=userAuth;
         const createdAt=new Date()
         try{
-          await userRef.set({
+          await userRef.set({//storing the data in the firestore
             displayName,
             email,
             createdAt,

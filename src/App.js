@@ -18,25 +18,26 @@ class App extends React.Component {
 componentDidMount(){
 this.unSubscribeFromAuth=auth.onAuthStateChanged(async userAuth =>{
   if(userAuth){
-    const userRef=await createUserProfileDocument(userAuth)
-    userRef.onSnapshot(snapshot=>{
-      this.setState({
+    const userRef=await createUserProfileDocument(userAuth) //userRef we got it from the config
+    userRef.onSnapshot(snapshot=>{//same as onAuthStatChanged (used insted of get())
+      this.setState({//storing the data in the state
         currentUser:{
-          id:snapshot.id,
+          id:snapshot.id,//we use it to get the id because it doesnt exist in the data()
           ...snapshot.data()
         }
-      })
-      console.log(this.state)
+      },()=>{console.log(this.state)})
+      
     });
   }
   else{
-    this.setState({currentUser:userAuth})
+    this.setState({currentUser:userAuth})//returns null always
   }
   
   // createUserProfileDocument(user)
   // this.setState({currentUser:user})
 })
 }
+//to prevent memory leaks
 componentWillUnmount(){
   this.unSubscribeFromAuth()
 }
@@ -44,7 +45,7 @@ componentWillUnmount(){
   return (
     <BrowserRouter>
     <div className="App">
-      <Header currentUser={this.state.currentUser}/>
+      <Header />
       <Switch>
      <Route exact path='/' component={HomePage}/>
      <Route  path='/shop' component={ShopPage}/>

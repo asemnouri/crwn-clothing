@@ -35,8 +35,9 @@ class SignUp extends React.Component {
         password
       );
 
-      await createUserProfileDocument(user, { displayName });
-
+      await createUserProfileDocument(user, { displayName });//to save the userName,email and password in the firestore
+      
+        //to clear the feilds after you signed up
       this.setState({
         displayName: '',
         email: '',
