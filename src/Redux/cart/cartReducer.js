@@ -1,7 +1,7 @@
 import cartActionTypes from './cartTypes'
 
 const INITIAL_STATE={
-    hidden:null
+    hidden:true
 }
 
 const cartReducer=(state=INITIAL_STATE,action)=>{
