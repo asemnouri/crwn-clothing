@@ -1,48 +1,34 @@
-// we use reselect memoization instead of always rerendering the state in cart-icon 
+import { createSelector } from 'reselect';
 
+const selectCart = state => state.cart;  // input selector takes the all reducer state and return part of it
 
-//it consists of two things one input selector that does not use createSelector and 
-//output selector that uses createSelector
+export const selectCartItem = createSelector(
+    [selectCart],  // in the order of the input selector
+    (cart) => cart.cartItem // function that returns property of selected reducer
 
-// import {createSelector} from 'reselect'
+)
 
-//input selector
-//  const selectCart = state =>state.selectCart
+export const selectCartHidden =createSelector(
+    [selectCart],
+    cart=>cart.hidden
+)
+export const selectCartItemCount = createSelector (
+    [selectCartItem],  // mesh shart ykon awwal input 3adi mmken mn eshe tani 3ashenno bedde bas cartitem
+    (cartItem) =>
+        cartItem.reduce(
+            (acc, cartItem) =>
+                acc + cartItem.quantity,
+            0
+        )
+)
 
- //output selector 
- //it takes two parameters the first is the input selector or the output selector
- //and the other is a function of what you want to do
-//  export const selectCartItems=createSelector(
-//      [selectCart],
-//      cart=>cart.cartItems
-//      )
-
-     //another output selector that takes an output selector
-     //in the second parameter we pass the reduce function from cart-icons
-    //  export const selectCartItemsCount=createSelector(
-    //     [selectCartItems],
-    //     cartItems=>
-    //     cartItems.reduce((accQuantity,cartItem)=>(
-    //         accQuantity + cartItem.quantity  
-    //       ),0))
-
-
-          import { createSelector } from 'reselect';
-
-const selectCart = state => state.cart;
-
-export const selectCartItems = createSelector(
-  [selectCart],
-  cart => cart.cartItems
-);
-
-export const selectCartItemsCount = createSelector(
-  [selectCartItems],
-  cartItems =>
-    cartItems.reduce(
-      (accumalatedQuantity, cartItem) =>
-        accumalatedQuantity + cartItem.quantity,
-      0
-    )
-);
-   
+export const selectCartTotal = createSelector(
+    [selectCartItem],
+    cartItems =>
+      cartItems.reduce(
+        (accumalatedQuantity, cartItem) =>
+          accumalatedQuantity + cartItem.quantity * cartItem.price,
+        0
+      )
+  );
+  

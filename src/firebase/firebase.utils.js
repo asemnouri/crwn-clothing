@@ -1,55 +1,56 @@
-  
+
+// import firebase libraries that we need (auth,firestore which is the db)
 import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
+import 'firebase/firestore'
+import 'firebase/auth'
 
+// initialize with our project key we get from firebase site
 const config =  {
-    apiKey: "AIzaSyCDhl3DXsTAThEOosIWLeP0aLshhJRLFek",
-    authDomain: "crwn-db-bb3bf.firebaseapp.com",
-    databaseURL: "https://crwn-db-bb3bf.firebaseio.com",
-    projectId: "crwn-db-bb3bf",
-    storageBucket: "crwn-db-bb3bf.appspot.com",
-    messagingSenderId: "993978586992",
-    appId: "1:993978586992:web:56633170074917322c61b5",
-    measurementId: "G-R779DY2XN0"
-  }
+  apiKey: "AIzaSyDMKR0vXsugwI50dhLCK0EW_vvWJzh5mNc",
+  authDomain: "crwm-db-momen.firebaseapp.com",
+  databaseURL: "https://crwm-db-momen.firebaseio.com",
+  projectId: "crwm-db-momen",
+  storageBucket: "crwm-db-momen.appspot.com",
+  messagingSenderId: "733808433762",
+  appId: "1:733808433762:web:89d4b3e808c41c9fa00f3b",
+  measurementId: "G-FJ72R509SP"
+};
+  export const createUserProfileDocument = async (userAuth, additionalData) => {
+    if(!userAuth) return;
 
-  export const createUserProfileDocument=async (userAuth, additionalData)=>{
-      if(!userAuth)return;
+    const userRef = firestore.doc(`users/${userAuth.uid}`)
 
-      const userRef =firestore.doc(`users/${userAuth.uid}`)
+    const snapShot = await userRef.get()
 
-      const snapShot =await userRef.get();
+    if(!snapShot.exists){
+      const { displayName, email} = userAuth;
+      const createdAt = new Date();
+      try{
+        await userRef.set({//the set() method is for doc and the create() method is for the collection 
+          displayName,
+          email,
+          createdAt,
+          ...additionalData
+        })
 
-    //OR const snapShot= await firestore.collection('users').doc(`${userAuth}`).get();
-
-      //to store the data in the firestore database
-      if(!snapShot.exists){
-        const {displayName,email}=userAuth;
-        const createdAt=new Date()
-        try{
-          await userRef.set({//storing the data in the firestore
-            displayName,
-            email,
-            createdAt,
-            ...additionalData
-          })
-        }catch(error){
-          console.log('error creating Auth')
-
-        }
+      } catch(error) {
+        console.log('error creating user', error.message)
       }
-      return userRef
+    }
+    return userRef;
+
   }
 
-firebase.initializeApp(config);
+  firebase.initializeApp(config);       // all previous steps are initializing
 
 
-export const auth = firebase.auth();
-export const firestore = firebase.firestore();
+  // make auth and firestore references to use their methods later on
+  export const auth = firebase.auth();
+  export const firestore = firebase.firestore();
 
-const provider = new firebase.auth.GoogleAuthProvider();
-provider.setCustomParameters({ prompt: 'select_account' });
-export const signInWithGoogle = () => auth.signInWithPopup(provider);
+  const provider = new firebase.auth.GoogleAuthProvider();
 
-export default firebase;
+  provider.setCustomParameters({prompt : 'select_account'});
+  export const signInWithGoogle = () => auth.signInWithPopup(provider);
+
+  export default firebase;
